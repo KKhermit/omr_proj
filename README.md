@@ -1,16 +1,16 @@
 # Lightweight Hybrid OMR
 
-一个可直接运行的端到端 OMR 项目：
+A ready-to-run end-to-end OMR (Optical Mark Recognition) project:
 
-- 模板页 PDF/图像读取
-- 扫描页对齐/校正/二值化
-- 复选框 contour 检测 + template fallback
-- crop 导出与 JSONL manifest 构建
-- 轻量 CNN / MobileNetV2 训练
-- TorchScript / ONNX 导出
-- 推理、置信度估计、不确定样本复核、CSV/JSON 输出、标注图保存
+- Template page PDF/image reading
+- Scanned page alignment, correction, and binarization
+- Checkbox contour detection with template fallback
+- Crop export and JSONL manifest building
+- Lightweight CNN / MobileNetV2 training
+- TorchScript / ONNX export
+- Inference, confidence estimation, uncertain sample review, CSV/JSON output, and annotated image saving
 
-## 环境安装
+## Setup
 
 ```bash
 python -m venv .venv
