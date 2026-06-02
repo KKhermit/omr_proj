@@ -1,0 +1,77 @@
+{
+  "page_width": 2550,
+  "page_height": 3300,
+  "num_questions": 3,
+  "choices": [
+    "A",
+    "B"
+  ],
+  "boxes": [
+    {
+      "box_id": "Q001_A",
+      "question": 1,
+      "choice": "A",
+      "bbox": [
+        467,
+        910,
+        555,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_B",
+      "question": 1,
+      "choice": "B",
+      "bbox": [
+        1140,
+        910,
+        1228,
+        998
+      ]
+    },
+    {
+      "box_id": "Q002_A",
+      "question": 2,
+      "choice": "A",
+      "bbox": [
+        467,
+        1319,
+        555,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_B",
+      "question": 2,
+      "choice": "B",
+      "bbox": [
+        1140,
+        1319,
+        1228,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q003_A",
+      "question": 3,
+      "choice": "A",
+      "bbox": [
+        467,
+        1728,
+        555,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_B",
+      "question": 3,
+      "choice": "B",
+      "bbox": [
+        1140,
+        1728,
+        1228,
+        1816
+      ]
+    }
+  ]
+}

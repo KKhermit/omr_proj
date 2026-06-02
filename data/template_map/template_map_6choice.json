@@ -1,0 +1,213 @@
+{
+  "page_width": 2550,
+  "page_height": 3300,
+  "num_questions": 3,
+  "choices": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F"
+  ],
+  "boxes": [
+    {
+      "box_id": "Q001_A",
+      "question": 1,
+      "choice": "A",
+      "bbox": [
+        467,
+        910,
+        555,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_B",
+      "question": 1,
+      "choice": "B",
+      "bbox": [
+        703,
+        910,
+        791,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_C",
+      "question": 1,
+      "choice": "C",
+      "bbox": [
+        940,
+        910,
+        1027,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_D",
+      "question": 1,
+      "choice": "D",
+      "bbox": [
+        1176,
+        910,
+        1264,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_E",
+      "question": 1,
+      "choice": "E",
+      "bbox": [
+        1412,
+        910,
+        1500,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_F",
+      "question": 1,
+      "choice": "F",
+      "bbox": [
+        1648,
+        910,
+        1736,
+        998
+      ]
+    },
+    {
+      "box_id": "Q002_A",
+      "question": 2,
+      "choice": "A",
+      "bbox": [
+        467,
+        1319,
+        555,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_B",
+      "question": 2,
+      "choice": "B",
+      "bbox": [
+        703,
+        1319,
+        791,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_C",
+      "question": 2,
+      "choice": "C",
+      "bbox": [
+        940,
+        1319,
+        1027,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_D",
+      "question": 2,
+      "choice": "D",
+      "bbox": [
+        1176,
+        1319,
+        1264,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_E",
+      "question": 2,
+      "choice": "E",
+      "bbox": [
+        1412,
+        1319,
+        1500,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_F",
+      "question": 2,
+      "choice": "F",
+      "bbox": [
+        1648,
+        1319,
+        1736,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q003_A",
+      "question": 3,
+      "choice": "A",
+      "bbox": [
+        467,
+        1728,
+        555,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_B",
+      "question": 3,
+      "choice": "B",
+      "bbox": [
+        703,
+        1728,
+        791,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_C",
+      "question": 3,
+      "choice": "C",
+      "bbox": [
+        940,
+        1728,
+        1027,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_D",
+      "question": 3,
+      "choice": "D",
+      "bbox": [
+        1176,
+        1728,
+        1264,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_E",
+      "question": 3,
+      "choice": "E",
+      "bbox": [
+        1412,
+        1728,
+        1500,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_F",
+      "question": 3,
+      "choice": "F",
+      "bbox": [
+        1648,
+        1728,
+        1736,
+        1816
+      ]
+    }
+  ]
+}

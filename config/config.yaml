@@ -1,0 +1,86 @@
+seed: 42
+
+data:
+  template: data/raw/template/template_4choice.pdf
+  template_map: data/template_map/template_map_4choice.json
+  train_manifest: data/synthetic/train.jsonl
+  val_manifest: data/synthetic/val.jsonl
+
+# Named template variants — each defines the source PDF, output template map,
+# and the answer choices printed on that sheet variant.
+# Select a variant at runtime with --variant <name>.
+templates:
+  2choice:
+    template: data/raw/template/template_2choice.pdf
+    template_map: data/template_map/template_map_2choice.json
+    choices: ["A", "B"]
+  4choice:
+    template: data/raw/template/template_4choice.pdf
+    template_map: data/template_map/template_map_4choice.json
+    choices: ["A", "B", "C", "D"]
+  6choice:
+    template: data/raw/template/template_6choice.pdf
+    template_map: data/template_map/template_map_6choice.json
+    choices: ["A", "B", "C", "D", "E", "F"]
+  mixed:
+    template: data/raw/template/template_mixed.pdf
+    template_map: data/template_map/template_map_mixed.json
+    valid_counts: [2, 4, 6]   # rows with 2, 4, or 6 boxes are all accepted
+
+preprocess:
+  dpi: 300
+  page: 1
+  poppler_path: null
+  deskew: true
+  max_abs_deskew_angle: 8.0
+  adaptive_block_size: 31
+  adaptive_c: 15
+  orb_features: 5000
+  min_match_count: 20
+  orb_keep_ratio: 0.25
+
+detector:
+  choices: ["A", "B", "C", "D"]
+  row_merge_px: 18
+  min_area_ratio: 0.0005
+  max_area_ratio: 0.005
+  aspect_ratio_tol: 0.35
+  min_contour_fill_ratio: 0.10
+  max_contour_fill_ratio: 0.99
+  nms_iou: 0.30
+  match_distance_px: 25
+  pad_ratio: 0.35
+
+model:
+  name: small_cnn        # tiny_cnn | small_cnn | mobilenetv2
+  in_channels: 1
+  img_size: 64
+  mean: 0.5
+  std: 0.5
+  dropout: 0.20
+  pretrained: false
+  mobilenet_width_mult: 0.5
+
+train:
+  batch_size: 128
+  num_workers: 4
+  epochs: 20
+  lr: 0.001
+  weight_decay: 0.0001
+  amp: true
+  early_patience: 5
+  val_ratio: 0.2
+  pos_weight: null
+  save_dir: outputs/checkpoints
+
+infer:
+  batch_size: 256
+  threshold: 0.50
+  uncertain_margin: 0.10
+  min_confidence: 0.55
+
+export:
+  after_train: true
+  onnx_opset: 17
+  torchscript_path: outputs/exports/omr_model.ts
+  onnx_path: outputs/exports/omr_model.onnx

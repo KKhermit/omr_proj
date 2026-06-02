@@ -1,0 +1,145 @@
+{
+  "page_width": 2550,
+  "page_height": 3300,
+  "num_questions": 3,
+  "choices": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "boxes": [
+    {
+      "box_id": "Q001_A",
+      "question": 1,
+      "choice": "A",
+      "bbox": [
+        467,
+        910,
+        555,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_B",
+      "question": 1,
+      "choice": "B",
+      "bbox": [
+        786,
+        910,
+        874,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_C",
+      "question": 1,
+      "choice": "C",
+      "bbox": [
+        1105,
+        910,
+        1193,
+        998
+      ]
+    },
+    {
+      "box_id": "Q001_D",
+      "question": 1,
+      "choice": "D",
+      "bbox": [
+        1424,
+        910,
+        1512,
+        998
+      ]
+    },
+    {
+      "box_id": "Q002_A",
+      "question": 2,
+      "choice": "A",
+      "bbox": [
+        467,
+        1319,
+        555,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_B",
+      "question": 2,
+      "choice": "B",
+      "bbox": [
+        786,
+        1319,
+        874,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_C",
+      "question": 2,
+      "choice": "C",
+      "bbox": [
+        1105,
+        1319,
+        1193,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q002_D",
+      "question": 2,
+      "choice": "D",
+      "bbox": [
+        1424,
+        1319,
+        1512,
+        1407
+      ]
+    },
+    {
+      "box_id": "Q003_A",
+      "question": 3,
+      "choice": "A",
+      "bbox": [
+        467,
+        1728,
+        555,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_B",
+      "question": 3,
+      "choice": "B",
+      "bbox": [
+        786,
+        1728,
+        874,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_C",
+      "question": 3,
+      "choice": "C",
+      "bbox": [
+        1105,
+        1728,
+        1193,
+        1816
+      ]
+    },
+    {
+      "box_id": "Q003_D",
+      "question": 3,
+      "choice": "D",
+      "bbox": [
+        1424,
+        1728,
+        1512,
+        1816
+      ]
+    }
+  ]
+}
