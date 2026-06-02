@@ -150,6 +150,7 @@ def align_to_template_orb(
     template: np.ndarray,
     nfeatures: int = 5000,
     min_matches: int = 20,
+    min_inliers: int = 30,
     keep_ratio: float = 0.25,
 ) -> tuple[np.ndarray | None, dict[str, Any]]:
     gray_scan = to_gray(scan)
@@ -171,8 +172,9 @@ def align_to_template_orb(
     src_pts = np.float32([kp1[m.queryIdx].pt for m in matches]).reshape(-1, 1, 2)
     dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1, 1, 2)
     h_matrix, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
-    debug["inliers"] = int(mask.sum()) if mask is not None else 0
-    if h_matrix is None:
+    inliers = int(mask.sum()) if mask is not None else 0
+    debug["inliers"] = inliers
+    if h_matrix is None or inliers < min_inliers:
         return None, debug
     h, w = template.shape[:2]
     aligned = cv2.warpPerspective(scan, h_matrix, (w, h), flags=cv2.INTER_LINEAR, borderValue=(255, 255, 255))
@@ -195,6 +197,7 @@ def rectify_or_align(
         template,
         nfeatures=cfg.get("orb_features", 5000),
         min_matches=cfg.get("min_match_count", 20),
+        min_inliers=cfg.get("orb_min_inliers", 30),
         keep_ratio=cfg.get("orb_keep_ratio", 0.25),
     )
     debug_meta["orb"] = orb_meta
