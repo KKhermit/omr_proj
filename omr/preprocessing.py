@@ -181,6 +181,80 @@ def align_to_template_orb(
     return aligned, debug
 
 
+def detect_fiducial_markers(
+    image: np.ndarray,
+    search_fraction: float = 0.25,
+    min_marker_px: int = 15,
+    max_marker_px: int = 250,
+    min_fill_ratio: float = 0.60,
+    aspect_tol: float = 0.35,
+) -> list[tuple[float, float]] | None:
+    """Locate the 4 corner fiducial squares; return [TL, TR, BL, BR] centers or None."""
+    gray = to_gray(image)
+    _, binary = cv2.threshold(gray, 50, 255, cv2.THRESH_BINARY_INV)
+    h, w = image.shape[:2]
+    sw, sh = int(w * search_fraction), int(h * search_fraction)
+    corners = [
+        (0,    0,    sw, sh),   # TL
+        (w-sw, 0,    w,  sh),   # TR
+        (0,    h-sh, sw, h),    # BL
+        (w-sw, h-sh, w,  h),    # BR
+    ]
+    centers: list[tuple[float, float]] = []
+    for x1, y1, x2, y2 in corners:
+        roi_bin = binary[y1:y2, x1:x2]
+        contours, _ = cv2.findContours(roi_bin, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        best: tuple[float, float] | None = None
+        best_area = 0.0
+        for c in contours:
+            rx, ry, rw, rh = cv2.boundingRect(c)
+            if rw < min_marker_px or rw > max_marker_px:
+                continue
+            if rh < min_marker_px or rh > max_marker_px:
+                continue
+            if abs(rw / rh - 1.0) > aspect_tol:
+                continue
+            # Use actual pixel density to distinguish filled markers from hollow boxes.
+            # cv2.contourArea on a hollow rectangle equals the full bounding area, so
+            # we count dark pixels in the bounding region directly instead.
+            patch = roi_bin[ry : ry + rh, rx : rx + rw]
+            fill = float(np.count_nonzero(patch)) / (rw * rh)
+            if fill < min_fill_ratio:
+                continue
+            area = float(rw * rh)
+            if area > best_area:
+                best_area = area
+                best = (x1 + rx + rw / 2.0, y1 + ry + rh / 2.0)
+        if best is None:
+            return None
+        centers.append(best)
+    return centers  # [TL, TR, BL, BR]
+
+
+def align_via_fiducials(
+    scan: np.ndarray,
+    template: np.ndarray,
+    cfg: dict[str, Any],
+) -> tuple[np.ndarray | None, dict[str, Any]]:
+    """Detect fiducial markers in scan and template, then warp scan onto template geometry."""
+    fraction = float(cfg.get("fiducial_search_fraction", 0.25))
+    tpl_centers = detect_fiducial_markers(template, search_fraction=fraction)
+    scan_centers = detect_fiducial_markers(scan, search_fraction=fraction)
+    debug: dict[str, Any] = {"template_centers": tpl_centers, "scan_centers": scan_centers}
+    if tpl_centers is None or scan_centers is None:
+        return None, debug
+    src = np.float32(scan_centers)
+    dst = np.float32(tpl_centers)
+    h_matrix = cv2.getPerspectiveTransform(src, dst)
+    th, tw = template.shape[:2]
+    aligned = cv2.warpPerspective(
+        scan, h_matrix, (tw, th),
+        flags=cv2.INTER_LINEAR,
+        borderValue=(255, 255, 255),
+    )
+    return aligned, debug
+
+
 def rectify_or_align(
     scan: np.ndarray,
     template: np.ndarray,
@@ -192,6 +266,16 @@ def rectify_or_align(
     working = deskew(scan, max_abs_angle=cfg.get("max_abs_deskew_angle", 8.0)) if cfg.get("deskew", True) else scan
     debug_images["deskewed"] = working
 
+    # 1. Fiducial corner markers — deterministic 4-point homography, most reliable.
+    if cfg.get("use_fiducials", True):
+        aligned, fid_meta = align_via_fiducials(working, template, cfg)
+        debug_meta["fiducial"] = fid_meta
+        if aligned is not None:
+            debug_images["aligned"] = aligned
+            debug_meta["method"] = "fiducial"
+            return aligned, debug_images, debug_meta
+
+    # 2. ORB feature homography — fallback when fiducials not detectable.
     aligned, orb_meta = align_to_template_orb(
         working,
         template,
@@ -203,19 +287,22 @@ def rectify_or_align(
     debug_meta["orb"] = orb_meta
     if aligned is not None:
         debug_images["aligned"] = aligned
+        debug_meta["method"] = "orb"
         return aligned, debug_images, debug_meta
 
+    # 3. Page-boundary corner warp.
     corners = detect_page_corners(working)
     if corners is not None:
         h, w = template.shape[:2]
         aligned = four_point_warp(working, corners, out_size=(w, h))
         debug_images["aligned"] = aligned
-        debug_meta["fallback"] = "page_corners"
+        debug_meta["method"] = "page_corners"
         return aligned, debug_images, debug_meta
 
+    # 4. Last resort: plain resize.
     resized = cv2.resize(working, (template.shape[1], template.shape[0]), interpolation=cv2.INTER_LINEAR)
     debug_images["aligned"] = resized
-    debug_meta["fallback"] = "resize_only"
+    debug_meta["method"] = "resize_only"
     return resized, debug_images, debug_meta
 
 
@@ -250,6 +337,8 @@ __all__ = [
     "order_points",
     "four_point_warp",
     "detect_page_corners",
+    "detect_fiducial_markers",
+    "align_via_fiducials",
     "align_to_template_orb",
     "rectify_or_align",
     "preprocess_scan_and_template",
