@@ -205,14 +205,15 @@ def map_detected_to_template(
                 best_dist = d
         if best_idx is not None and best_dist <= match_distance_px:
             used.add(best_idx)
-            picked = detected_boxes[best_idx]
-            bbox = picked.to_list()
             source = "contour"
+            detected_bbox: list[int] | None = detected_boxes[best_idx].to_list()
         else:
-            bbox = [tx1, ty1, tx2, ty2]
             source = "template_fallback"
+            detected_bbox = None
         row = dict(item)
-        row["bbox"] = bbox
+        # bbox always stays as the template position — used for cropping so that
+        # marks drawn around or over the box don't distort the crop region.
+        row["detected_bbox"] = detected_bbox
         row["source"] = source
         assigned.append(row)
     return assigned

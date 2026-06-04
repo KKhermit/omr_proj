@@ -78,6 +78,8 @@ infer:
   threshold: 0.50
   uncertain_margin: 0.10
   min_confidence: 0.55
+  fill_ratio_low: 0.04    # CNN says filled but crop is nearly blank → flag uncertain
+  fill_ratio_high: 0.25   # CNN says empty but crop is heavily marked → flag uncertain
 
 export:
   after_train: true

@@ -72,6 +72,12 @@ def load_backend(model_path: str | Path, cfg: dict[str, Any], device: str = "cpu
     raise ValueError(f"Not supported model format: {suffix}")
 
 
+def _crop_fill_ratio(crop_bgr: np.ndarray, dark_threshold: int = 127) -> float:
+    """Fraction of pixels darker than dark_threshold in the crop."""
+    gray = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2GRAY) if crop_bgr.ndim == 3 else crop_bgr
+    return float(np.count_nonzero(gray < dark_threshold)) / max(gray.size, 1)
+
+
 def _batch_predict_crops(
     backend: BaseBackend,
     crop_arrays: list[np.ndarray],
@@ -179,12 +185,22 @@ def infer_single_scan(
     threshold = float(cfg["infer"].get("threshold", 0.5))
     uncertain_margin = float(cfg["infer"].get("uncertain_margin", 0.10))
     min_confidence = float(cfg["infer"].get("min_confidence", 0.55))
+    fill_ratio_low = float(cfg["infer"].get("fill_ratio_low", 0.04))
+    fill_ratio_high = float(cfg["infer"].get("fill_ratio_high", 0.25))
+
+    fill_ratios = [_crop_fill_ratio(c) for c in crop_arrays]
 
     results: list[dict[str, Any]] = []
-    for row, prob in zip(meta_rows, probs.tolist()):
+    for row, prob, fill_ratio in zip(meta_rows, probs.tolist(), fill_ratios):
         entropy = normalized_entropy(prob)
         confidence = 1.0 - entropy
-        uncertain = (abs(prob - threshold) < uncertain_margin) or (confidence < min_confidence)
+        model_uncertain = (abs(prob - threshold) < uncertain_margin) or (confidence < min_confidence)
+        # Flag when CNN and pixel density strongly disagree.
+        fill_disagrees = (
+            (prob < threshold - uncertain_margin and fill_ratio > fill_ratio_high) or
+            (prob > threshold + uncertain_margin and fill_ratio < fill_ratio_low)
+        )
+        uncertain = model_uncertain or fill_disagrees
         pred = "filled" if prob >= threshold else "empty"
         out_row = {
             "scan": str(scan_path),
@@ -194,11 +210,14 @@ def infer_single_scan(
             "bbox": row["bbox"],
             "crop_bbox": row["crop_bbox"],
             "source": row.get("source", "unknown"),
+            "detected_bbox": row.get("detected_bbox"),
             "image": row["image"],
             "prob_fill": float(prob),
+            "fill_ratio": round(float(fill_ratio), 4),
             "pred": pred,
             "confidence": float(confidence),
             "uncertain": bool(uncertain),
+            "fill_disagrees": bool(fill_disagrees),
         }
         results.append(out_row)
         if uncertain:
