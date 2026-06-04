@@ -223,21 +223,17 @@ def extract_crops_from_template(
     aligned_bgr: np.ndarray,
     template_map: dict[str, Any],
     detector_cfg: dict[str, Any],
-    binary: np.ndarray | None = None,
 ) -> list[dict[str, Any]]:
-    if binary is None:
-        gray = cv2.cvtColor(aligned_bgr, cv2.COLOR_BGR2GRAY)
-        binary = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 31, 15)
-    detected = detect_checkbox_contours(binary, detector_cfg)
-    mapped = map_detected_to_template(
-        detected,
-        template_map,
-        match_distance_px=float(detector_cfg.get("match_distance_px", 25.0)),
-    )
+    """Crop each answer box from the aligned scan using template coordinates directly.
+
+    Contour detection on the scan is intentionally not used here — detected marks
+    (circles, crosses, smudges) can be misidentified as box boundaries and distort
+    the crop region. The template map already contains the exact box positions.
+    """
     h, w = aligned_bgr.shape[:2]
     pad_ratio = float(detector_cfg.get("pad_ratio", 0.35))
     results: list[dict[str, Any]] = []
-    for item in mapped:
+    for item in template_map["boxes"]:
         x1, y1, x2, y2 = item["bbox"]
         bw, bh = x2 - x1, y2 - y1
         pad_x = int(round(bw * pad_ratio))
@@ -270,15 +266,14 @@ def draw_template_boxes(image: np.ndarray, items: list[dict[str, Any]]) -> np.nd
     canvas = image.copy()
     for item in items:
         x1, y1, x2, y2 = map(int, item["bbox"])
-        color = (0, 255, 0) if item.get("source") == "contour" else (0, 255, 255)
-        cv2.rectangle(canvas, (x1, y1), (x2, y2), color, 2)
+        cv2.rectangle(canvas, (x1, y1), (x2, y2), (0, 255, 0), 2)
         cv2.putText(
             canvas,
             item["box_id"],
             (x1, max(16, y1 - 4)),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.45,
-            color,
+            (0, 255, 0),
             1,
             cv2.LINE_AA,
         )

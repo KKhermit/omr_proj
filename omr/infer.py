@@ -155,7 +155,7 @@ def infer_single_scan(
         cfg["preprocess"],
     )
     template_map = load_json(template_map_path)
-    items = extract_crops_from_template(aligned, template_map, cfg["detector"], binary=binary)
+    items = extract_crops_from_template(aligned, template_map, cfg["detector"])
 
     for name, img in debug_images.items():
         cv2.imwrite(str(out_dir / f"debug_{name}.png"), img)
@@ -209,8 +209,6 @@ def infer_single_scan(
             "choice": row["choice"],
             "bbox": row["bbox"],
             "crop_bbox": row["crop_bbox"],
-            "source": row.get("source", "unknown"),
-            "detected_bbox": row.get("detected_bbox"),
             "image": row["image"],
             "prob_fill": float(prob),
             "fill_ratio": round(float(fill_ratio), 4),
