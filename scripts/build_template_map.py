@@ -29,10 +29,14 @@ def _resolve_template_args(
             # single-format variant: exactly one valid count
             choice_labels = list(entry["choices"])
             valid_counts = [len(choice_labels)]
-        else:
-            # mixed variant: multiple valid counts, labels auto-assigned A-Z
+        elif entry.get("valid_counts") is not None:
+            # mixed variant with explicit allowed counts
             valid_counts = list(entry["valid_counts"])
             choice_labels = _ALL_LABELS[:max(valid_counts)]
+        else:
+            # fully flexible: accept any row length, labels A-Z
+            valid_counts = None
+            choice_labels = _ALL_LABELS
     else:
         template_path = template_override or cfg["data"]["template"]
         output_path = output_override or cfg["data"]["template_map"]

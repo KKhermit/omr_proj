@@ -121,7 +121,7 @@ def group_rows(boxes: list[Box], row_merge_px: int = 18) -> list[list[Box]]:
 def boxes_to_template_map(
     boxes: list[Box],
     page_shape: tuple[int, int],
-    valid_counts: list[int],
+    valid_counts: list[int] | None,
     choice_labels: list[str],
     row_merge_px: int = 18,
 ) -> dict[str, Any]:
@@ -136,8 +136,11 @@ def boxes_to_template_map(
         n = len(row)
         print(f"\nRow {row_idx}: {n} boxes")
 
-        if n not in valid_counts:
+        if valid_counts is not None and n not in valid_counts:
             print(f"Skipping row {row_idx} (got {n} boxes, valid counts: {valid_counts})")
+            continue
+        if n > len(choice_labels):
+            print(f"Skipping row {row_idx} (got {n} boxes, only {len(choice_labels)} labels available)")
             continue
 
         widths = [b.w for b in row]
@@ -176,6 +179,58 @@ def boxes_to_template_map(
 
 def save_template_map(template_map: dict[str, Any], path: str | Path) -> None:
     save_json(template_map, path)
+
+
+def detect_checkbox_coords(
+    template_bgr: np.ndarray,
+    cfg: dict[str, Any],
+) -> list[tuple[int, int, int, int]]:
+    """Detect all checkbox squares in a blank template and return their coordinates.
+
+    Returns a list of (x1, y1, x2, y2) tuples sorted top-to-bottom, left-to-right.
+    This is the low-level entry point — no question labelling or row grouping is applied.
+    """
+    from omr.preprocessing import adaptive_binarize, to_gray
+
+    gray = to_gray(template_bgr)
+    binary = adaptive_binarize(
+        gray,
+        block_size=int(cfg.get("adaptive_block_size", 31)),
+        c=int(cfg.get("adaptive_c", 15)),
+    )
+    detector_cfg = cfg.get("detector", cfg)
+    boxes = detect_checkbox_contours(binary, detector_cfg)
+    return [tuple(b.to_list()) for b in boxes]  # type: ignore[return-value]
+
+
+def crop_regions(
+    image: np.ndarray,
+    coords: list[tuple[int, int, int, int]],
+    pad_ratio: float = 0.15,
+) -> list[np.ndarray]:
+    """Crop a list of regions from *image* with proportional padding on each side.
+
+    Args:
+        image:     BGR (or grayscale) image to crop from.
+        coords:    List of (x1, y1, x2, y2) bounding boxes in pixel coordinates.
+        pad_ratio: Fraction of box width/height to add as padding on each side.
+                   0.15 means 15 % of the box dimension added to each edge.
+
+    Returns:
+        List of cropped numpy arrays, one per input coordinate, in the same order.
+    """
+    h, w = image.shape[:2]
+    crops: list[np.ndarray] = []
+    for x1, y1, x2, y2 in coords:
+        bw, bh = x2 - x1, y2 - y1
+        pad_x = int(round(bw * pad_ratio))
+        pad_y = int(round(bh * pad_ratio))
+        cx1 = max(0, x1 - pad_x)
+        cy1 = max(0, y1 - pad_y)
+        cx2 = min(w, x2 + pad_x)
+        cy2 = min(h, y2 + pad_y)
+        crops.append(image[cy1:cy2, cx1:cx2].copy())
+    return crops
 
 
 def _distance(a: tuple[float, float], b: tuple[float, float]) -> float:
@@ -283,6 +338,8 @@ def draw_template_boxes(image: np.ndarray, items: list[dict[str, Any]]) -> np.nd
 __all__ = [
     "Box",
     "detect_checkbox_contours",
+    "detect_checkbox_coords",
+    "crop_regions",
     "group_rows",
     "boxes_to_template_map",
     "save_template_map",

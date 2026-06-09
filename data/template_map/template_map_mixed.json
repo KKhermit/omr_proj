@@ -2,11 +2,7 @@
   "page_width": 2550,
   "page_height": 3300,
   "num_questions": 5,
-  "valid_counts": [
-    2,
-    4,
-    6
-  ],
+  "valid_counts": null,
   "boxes": [
     {
       "box_id": "Q001_A",

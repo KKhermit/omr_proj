@@ -25,7 +25,7 @@ templates:
   mixed:
     template: data/raw/template/template_mixed.pdf
     template_map: data/template_map/template_map_mixed.json
-    valid_counts: [2, 4, 6]   # rows with 2, 4, or 6 boxes are all accepted
+    # no valid_counts → accept any row length, labels assigned A-Z (up to 26 choices)
 
 preprocess:
   dpi: 300
