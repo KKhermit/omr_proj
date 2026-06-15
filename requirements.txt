@@ -1,4 +1,7 @@
 numpy>=1.24
+fastapi>=0.111
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
 opencv-python>=4.8
 pillow>=10.0
 pdf2image>=1.17

@@ -16,7 +16,7 @@ from omr.utils import draw_labeled_boxes, ensure_dir, load_json, load_yaml, norm
 
 
 class BaseBackend:
-    def predict(self, batch_tensor: torch.Tensor) -> np.ndarray:
+    def predict(self, batch_tensor: torch.Tensor) -> np.ndarray:  # noqa: ARG002
         raise NotImplementedError
 
 
@@ -142,14 +142,16 @@ def infer_single_scan(
     output_root: str | Path,
     device: str = "cpu",
     variant: str | None = None,
+    backend: BaseBackend | None = None,
 ) -> dict[str, Any]:
     cfg = load_yaml(config_path)
-    backend = load_backend(model_path, cfg, device=device)
+    if backend is None:
+        backend = load_backend(model_path, cfg, device=device)
     out_dir = ensure_dir(Path(output_root) / Path(scan_path).stem)
 
     template_path, template_map_path = _resolve_infer_paths(cfg, variant)
 
-    aligned, binary, debug_images, debug_meta = preprocess_scan_and_template(
+    aligned, _, debug_images, debug_meta = preprocess_scan_and_template(
         scan_path,
         template_path,
         cfg["preprocess"],

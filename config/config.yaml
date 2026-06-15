@@ -26,6 +26,14 @@ templates:
     template: data/raw/template/template_mixed.pdf
     template_map: data/template_map/template_map_mixed.json
     # no valid_counts → accept any row length, labels assigned A-Z (up to 26 choices)
+  assembled_4choice:
+    template: data/raw/template/template_4choice_assembled.pdf
+    template_map: data/template_map/template_map_assembled_4choice.json
+    choices: ["A", "B", "C", "D"]
+  math_quiz:
+    template: data/raw/template/exam_math_quiz.pdf
+    template_map: data/template_map/template_map_math_quiz.json
+    choices: ["A", "B", "C", "D"]
 
 preprocess:
   dpi: 300

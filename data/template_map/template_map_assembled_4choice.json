@@ -1,0 +1,142 @@
+{
+  "page_width": 2481,
+  "page_height": 3508,
+  "num_questions": 3,
+  "valid_counts": [
+    4
+  ],
+  "boxes": [
+    {
+      "box_id": "Q001_A",
+      "question": 1,
+      "choice": "A",
+      "bbox": [
+        422,
+        933,
+        518,
+        1030
+      ]
+    },
+    {
+      "box_id": "Q001_B",
+      "question": 1,
+      "choice": "B",
+      "bbox": [
+        772,
+        933,
+        868,
+        1030
+      ]
+    },
+    {
+      "box_id": "Q001_C",
+      "question": 1,
+      "choice": "C",
+      "bbox": [
+        1122,
+        933,
+        1219,
+        1030
+      ]
+    },
+    {
+      "box_id": "Q001_D",
+      "question": 1,
+      "choice": "D",
+      "bbox": [
+        1473,
+        933,
+        1569,
+        1030
+      ]
+    },
+    {
+      "box_id": "Q002_A",
+      "question": 2,
+      "choice": "A",
+      "bbox": [
+        422,
+        1397,
+        518,
+        1493
+      ]
+    },
+    {
+      "box_id": "Q002_B",
+      "question": 2,
+      "choice": "B",
+      "bbox": [
+        772,
+        1397,
+        868,
+        1493
+      ]
+    },
+    {
+      "box_id": "Q002_C",
+      "question": 2,
+      "choice": "C",
+      "bbox": [
+        1122,
+        1397,
+        1219,
+        1493
+      ]
+    },
+    {
+      "box_id": "Q002_D",
+      "question": 2,
+      "choice": "D",
+      "bbox": [
+        1473,
+        1397,
+        1569,
+        1493
+      ]
+    },
+    {
+      "box_id": "Q003_A",
+      "question": 3,
+      "choice": "A",
+      "bbox": [
+        422,
+        1860,
+        518,
+        1956
+      ]
+    },
+    {
+      "box_id": "Q003_B",
+      "question": 3,
+      "choice": "B",
+      "bbox": [
+        772,
+        1860,
+        868,
+        1956
+      ]
+    },
+    {
+      "box_id": "Q003_C",
+      "question": 3,
+      "choice": "C",
+      "bbox": [
+        1122,
+        1860,
+        1219,
+        1956
+      ]
+    },
+    {
+      "box_id": "Q003_D",
+      "question": 3,
+      "choice": "D",
+      "bbox": [
+        1473,
+        1860,
+        1569,
+        1956
+      ]
+    }
+  ]
+}
